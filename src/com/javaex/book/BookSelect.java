@@ -5,10 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BookInsert {
+public class BookSelect {
 
 	public static void main(String[] args) {
+
+		List<BookVo> bookList = new ArrayList<BookVo>();
 
 		// 0. import java.sql.*;
 		Connection conn = null;
@@ -23,22 +27,50 @@ public class BookInsert {
 			conn = DriverManager.getConnection(url, "book", "book");
 
 			// 3. SQL문 준비 / 바인딩 / 실행
-			// sql문 준비
 			String query = "";
-			query += " insert into book";
-			query += " values(null, ?, ?, ?, null)";
+			query += " select b.book_id,";
+			query += " 		  b.title,";
+			query += "  	  b.pubs,";
+			query += "  	  b.pub_date,";
+			query += "  	  b.author_id,";
+			query += "  	  a.author_name,";
+			query += "  	  a.author_desc";
+			query += " from book b";
+			query += " left join author a";
+			query += " 	      on b.author_id = a.author_id";
 
 			// 바인딩
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, "");
-			pstmt.setString(2, "");
-			pstmt.setString(3, "");
-
 			// 실행
-			int count = pstmt.executeUpdate();
+			rs = pstmt.executeQuery();
 
 			// 4.결과처리
-			System.out.println(count + "건 등록 되었습니다.");
+			int bookId;
+			String title;
+			String pubs;
+			String pubDate;
+			int authorId;
+			String authorName;
+			String authorDesc;
+
+			while (rs.next()) {
+
+				bookId = rs.getInt("book_id");
+				title = rs.getString("title");
+				pubs = rs.getString("pubs");
+				pubDate = rs.getString("pub_date");
+				authorId = rs.getInt("author_id");
+				authorName = rs.getString("author_name");
+				authorDesc = rs.getString("author_desc");
+
+				BookVo v0 = new BookVo(bookId, title, pubs, pubDate, authorId, authorName, authorDesc);
+				bookList.add(v0);
+			}
+
+			for (int i = 0; i < bookList.size(); i++) {
+				bookList.get(i).toString();
+
+			}
 
 		} catch (ClassNotFoundException e) {
 			System.out.println("error: 드라이버 로딩 실패 - " + e);
@@ -60,6 +92,7 @@ public class BookInsert {
 				System.out.println("error:" + e);
 			}
 		}
+
 	}
 
 }

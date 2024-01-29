@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BookInsert {
+public class BookUpdate {
 
 	public static void main(String[] args) {
 
@@ -23,22 +23,24 @@ public class BookInsert {
 			conn = DriverManager.getConnection(url, "book", "book");
 
 			// 3. SQL문 준비 / 바인딩 / 실행
-			// sql문 준비
-			String query = "";
-			query += " insert into book";
-			query += " values(null, ?, ?, ?, null)";
 
-			// 바인딩
+			String query = "";
+			query += " update book";
+			query += " set title = ?";
+			query += "     pubs = ?";
+			query += "     pub_date = ?";
+			query += "     author_id = ?";
+			query += " where book_id = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, "");
 			pstmt.setString(2, "");
 			pstmt.setString(3, "");
+			pstmt.setInt(4, 1);
+			pstmt.setInt(5, 2);
 
-			// 실행
-			int count = pstmt.executeUpdate();
+			rs = pstmt.executeQuery();
 
 			// 4.결과처리
-			System.out.println(count + "건 등록 되었습니다.");
 
 		} catch (ClassNotFoundException e) {
 			System.out.println("error: 드라이버 로딩 실패 - " + e);
@@ -60,6 +62,7 @@ public class BookInsert {
 				System.out.println("error:" + e);
 			}
 		}
+
 	}
 
 }
